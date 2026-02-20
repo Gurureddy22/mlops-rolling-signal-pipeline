@@ -1,0 +1,9 @@
+{
+    "version": "v1",
+    "rows_processed": 8,
+    "metric": "signal_rate",
+    "value": 0.5,
+    "latency_ms": 39,
+    "seed": 42,
+    "status": "success"
+}

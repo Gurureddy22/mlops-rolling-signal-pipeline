@@ -1,0 +1,28 @@
+2026-02-21 00:23:05,000 - INFO - Job started
+2026-02-21 00:23:19,867 - INFO - Job started
+2026-02-21 00:25:31,681 - INFO - Job started
+2026-02-21 00:25:31,682 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 00:31:04,021 - INFO - Job started
+2026-02-21 00:31:04,024 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 00:33:13,870 - INFO - Job started
+2026-02-21 00:33:13,871 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 00:33:13,907 - INFO - CSV loaded successfully with 8 rows
+2026-02-21 00:35:35,700 - INFO - Job started
+2026-02-21 00:35:35,702 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 00:35:35,705 - INFO - CSV loaded successfully with 8 rows
+2026-02-21 00:35:35,713 - INFO - Rolling mean calculated
+2026-02-21 00:35:35,715 - INFO - Signal column generated
+2026-02-21 00:37:50,842 - INFO - Job started
+2026-02-21 00:37:50,843 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 00:37:50,848 - INFO - CSV loaded successfully with 8 rows
+2026-02-21 00:37:50,850 - INFO - Rolling mean calculated
+2026-02-21 00:37:50,850 - INFO - Signal column generated
+2026-02-21 00:37:50,859 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 14, 'seed': 42, 'status': 'success'}
+2026-02-21 00:37:50,859 - INFO - Job completed successfully
+2026-02-21 01:24:25,204 - INFO - Job started
+2026-02-21 01:24:25,209 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-21 01:24:25,228 - INFO - CSV loaded successfully with 8 rows
+2026-02-21 01:24:25,241 - INFO - Rolling mean calculated
+2026-02-21 01:24:25,243 - INFO - Signal column generated
+2026-02-21 01:24:25,246 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 39, 'seed': 42, 'status': 'success'}
+2026-02-21 01:24:25,246 - INFO - Job completed successfully
