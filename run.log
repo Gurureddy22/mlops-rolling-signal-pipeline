@@ -26,3 +26,46 @@
 2026-02-21 01:24:25,243 - INFO - Signal column generated
 2026-02-21 01:24:25,246 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 39, 'seed': 42, 'status': 'success'}
 2026-02-21 01:24:25,246 - INFO - Job completed successfully
+2026-02-26 12:19:52,843 - INFO - Job started
+2026-02-26 12:19:52,856 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:19:52,870 - INFO - CSV loaded successfully with 8 rows
+2026-02-26 12:19:52,883 - INFO - Rolling mean calculated
+2026-02-26 12:19:52,885 - INFO - Signal column generated
+2026-02-26 12:19:52,886 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 43, 'seed': 42, 'status': 'success'}
+2026-02-26 12:19:52,886 - INFO - Job completed successfully
+2026-02-26 12:35:35,183 - INFO - Job started
+2026-02-26 12:35:35,192 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:35:35,193 - ERROR - Input file does not exist
+2026-02-26 12:36:32,458 - INFO - Job started
+2026-02-26 12:36:32,459 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:36:32,469 - INFO - CSV loaded successfully with 8 rows
+2026-02-26 12:36:32,470 - INFO - Rolling mean calculated
+2026-02-26 12:36:32,471 - INFO - Signal column generated
+2026-02-26 12:36:32,473 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 14, 'seed': 42, 'status': 'success'}
+2026-02-26 12:36:32,473 - INFO - Job completed successfully
+2026-02-26 12:39:20,790 - INFO - Job started
+2026-02-26 12:39:20,791 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:39:20,793 - ERROR - Input file does not exist
+2026-02-26 12:41:29,120 - INFO - Job started
+2026-02-26 12:41:29,121 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:41:29,122 - ERROR - Input file does not exist
+2026-02-26 12:41:47,220 - INFO - Job started
+2026-02-26 12:41:47,221 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:41:47,228 - INFO - CSV loaded successfully with 8 rows
+2026-02-26 12:41:47,229 - INFO - Rolling mean calculated
+2026-02-26 12:41:47,230 - INFO - Signal column generated
+2026-02-26 12:41:47,232 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 8, 'metric': 'signal_rate', 'value': 0.5, 'latency_ms': 11, 'seed': 42, 'status': 'success'}
+2026-02-26 12:41:47,232 - INFO - Job completed successfully
+2026-02-26 12:41:55,491 - INFO - Job started
+2026-02-26 12:41:55,492 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:41:55,493 - ERROR - Input file does not exist
+2026-02-26 12:44:26,125 - INFO - Job started
+2026-02-26 12:44:26,127 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:44:26,129 - ERROR - Input file does not exist
+2026-02-26 12:45:24,168 - INFO - Job started
+2026-02-26 12:45:24,170 - INFO - Config loaded successfully: seed=42, window=5, version=v1
+2026-02-26 12:45:24,217 - INFO - CSV loaded successfully with 10000 rows
+2026-02-26 12:45:24,220 - INFO - Rolling mean calculated
+2026-02-26 12:45:24,221 - INFO - Signal column generated
+2026-02-26 12:45:24,223 - INFO - Metrics calculated: {'version': 'v1', 'rows_processed': 10000, 'metric': 'signal_rate', 'value': 0.4989, 'latency_ms': 53, 'seed': 42, 'status': 'success'}
+2026-02-26 12:45:24,223 - INFO - Job completed successfully
