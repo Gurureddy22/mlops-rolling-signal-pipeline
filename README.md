@@ -1,56 +1,164 @@
 # 📦 MLOps Rolling Signal Pipeline
----------------
+
+---
+
 ## 📌 Overview
 
-This project implements a miniature MLOps-style batch pipeline that demonstrates:
+This project implements a minimal, production-style batch data pipeline that demonstrates core MLOps engineering principles:
 
-Deterministic execution using configuration
+- Deterministic execution via configuration and seeded randomness  
+- Structured logging for observability  
+- Machine-readable metrics output  
+- Robust input validation and error handling  
+- Dockerized, reproducible execution  
 
-Structured logging
+The pipeline processes cryptocurrency OHLCV data and generates a binary trading signal based on a rolling mean of the `close` price.
 
-Rolling mean computation
+This mirrors real-world trading signal pipelines used in quantitative systems.
 
-Signal generation
+---
 
-Machine-readable metrics output
+## 🎯 Objective
 
-Robust error handling
+The goal of this implementation is to simulate a reproducible and deployment-ready batch job that:
 
-Dockerized reproducible execution
+1. Loads configuration from YAML
+2. Validates inputs robustly
+3. Computes rolling statistics
+4. Generates trading signals
+5. Outputs structured metrics
+6. Logs execution details
+7. Runs identically inside Docker
 
-The pipeline processes cryptocurrency OHLCV data and computes a signal based on rolling averages of the close price.
+---
 
-## 🧠 Pipeline Logic
+## 🧠 Processing Logic
 
-The application performs the following steps:
+### Step 1 — Load & Validate Configuration
 
-Load configuration from config.yaml
+- Reads `config.yaml`
+- Validates required fields:
+  - `seed`
+  - `window`
+  - `version`
+- Sets deterministic seed:
+  
+```python
+numpy.random.seed(seed)
+```
 
-Set deterministic random seed
+This guarantees reproducibility across runs.
 
-Validate and ingest CSV input
+---
 
-Compute rolling mean on close column
+### Step 2 — Validate Dataset
 
-Generate trading signal:
+The pipeline safely handles:
 
-1 if close > rolling_mean
+- Missing input file
+- Invalid CSV format
+- Empty dataset
+- Missing required column (`close`)
+- Invalid configuration structure
 
-0 otherwise
+All errors generate a structured JSON response and exit cleanly.
 
-Compute metrics:
+---
 
-Total rows processed
+### Step 3 — Rolling Mean Computation
 
-Signal rate (mean of signals)
+Rolling mean is computed using:
 
-Execution latency (ms)
+```python
+df["rolling_mean"] = df["close"].rolling(window=window).mean()
+```
 
-Write structured JSON output
+- The first `window-1` rows produce `NaN`
+- Signal generation naturally excludes them via comparison logic
+- Behavior is deterministic and consistent
 
-Log all execution steps
+---
+
+### Step 4 — Signal Generation
+
+Binary signal logic:
+
+```python
+signal = 1 if close > rolling_mean else 0
+```
+
+Vectorized implementation:
+
+```python
+df["signal"] = (df["close"] > df["rolling_mean"]).astype(int)
+```
+
+---
+
+### Step 5 — Metrics & Timing
+
+The pipeline computes:
+
+- `rows_processed`
+- `signal_rate` (mean of signal column)
+- `latency_ms` (total runtime in milliseconds)
+
+Metrics are written to `metrics.json` in both success and error cases.
+
+---
+
+## 📊 Example Output (metrics.json)
+
+```json
+{
+    "version": "v1",
+    "rows_processed": 10000,
+    "metric": "signal_rate",
+    "value": 0.4990,
+    "latency_ms": 127,
+    "seed": 42,
+    "status": "success"
+}
+```
+
+---
+
+## ❌ Error Output Format
+
+On failure:
+
+```json
+{
+    "version": "v1",
+    "status": "error",
+    "error_message": "Description of what went wrong"
+}
+```
+
+> Metrics file is written in both success and error cases, as required.
+
+---
+
+## 📜 Logging (run.log)
+
+The pipeline logs:
+
+- Job start timestamp
+- Configuration validation
+- Rows loaded
+- Rolling mean computation
+- Signal generation
+- Metrics summary
+- Job completion status
+- Any exceptions or validation failures
+
+This ensures full observability.
+
+---
 
 ## 📁 Project Structure
+
+```text
 mlops-rolling-signal-pipeline/
 │
 ├── run.py
@@ -61,125 +169,106 @@ mlops-rolling-signal-pipeline/
 ├── data.csv
 ├── metrics.json
 └── run.log
+```
+
+---
+
 ## ⚙️ Configuration (config.yaml)
+
+```yaml
 seed: 42
 window: 5
 version: "v1"
+```
+
+---
+
 ## 🛠 Dependencies
 
-Python 3.10+
+- Python 3.9+
+- pandas
+- numpy
+- pyyaml
+- Docker
 
-pandas
+Install locally:
 
-numpy
-
-pyyaml
-
-## Docker
-
-Install locally using:
 ```bash
 pip install -r requirements.txt
 ```
+
+---
+
 ## ▶️ Local Execution
 
-Run the pipeline locally:
-
-python run.py --input data.csv --config config.yaml --output metrics.json --log-file run.log
-## 🐳 Docker Execution (Recommended)
-Build Docker Image
 ```bash
-docker build -t mlops-pipeline .
+python run.py \
+    --input data.csv \
+    --config config.yaml \
+    --output metrics.json \
+    --log-file run.log
 ```
-Run Container
+
+No hardcoded paths are used.
+
+---
+
+## 🐳 Docker Execution
+
+### Build Image
+
 ```bash
-docker run --rm mlops-pipeline
+docker build -t mlops-task .
 ```
-The container:
 
-Executes automatically on startup
+### Run Container
 
-Generates metrics.json
+```bash
+docker run --rm mlops-task
+```
 
-Generates run.log
+Container behavior:
 
-Prints metrics JSON to stdout
+- Includes `data.csv` and `config.yaml`
+- Generates `metrics.json`
+- Generates `run.log`
+- Prints final metrics JSON to stdout
+- Exits with code 0 on success
+- Exits with non-zero code on failure
 
-Exits with code 0 on success
+---
 
-📊 Example Output (metrics.json)
-{
-    "version": "v1",
-    "rows_processed": 8,
-    "metric": "signal_rate",
-    "value": 0.5,
-    "latency_ms": 25,
-    "seed": 42,
-    "status": "success"
-}
-## 📜 Logging
-
-Logs are written to run.log and include:
-
-Job start timestamp
-
-Configuration verification
-
-Data ingestion details
-
-Rolling mean calculation
-
-Signal generation
-
-Metrics summary
-
-Job completion status
-
-Error reporting (if applicable)
-
-## ❌ Error Handling
-
-The pipeline gracefully handles:
-
-Missing input file
-
-Invalid CSV format
-
-Empty CSV file
-
-Missing close column
-
-Invalid configuration structure
-
-On error, a structured JSON response is returned:
-
-{
-    "version": "v1",
-    "status": "error",
-    "error_message": "Description of the issue"
-}
 ## 🔁 Reproducibility
 
-Deterministic execution via fixed random seed
+The pipeline guarantees deterministic results via:
 
-Config-driven parameters
+- Config-driven parameters
+- Explicit seed setting
+- Controlled runtime environment (Docker)
+- No hidden state or randomness
 
-Fully containerized environment
+Running the pipeline multiple times produces identical outputs.
 
-No hardcoded file paths
-
-Running the pipeline multiple times produces identical results.
+---
 
 ## 🏗 Design Principles
 
-Clean CLI interface
+- Clean CLI interface
+- Strict input validation
+- Clear separation of configuration and logic
+- Structured, machine-readable outputs
+- Production-style error handling
+- Dockerized deployment
+- Deterministic and testable behavior
 
-Separation of configuration and logic
+---
 
-Observability through structured logging
+## 🧪 Compliance Checklist
 
-Machine-readable metrics
-
-Production-style error handling
-
-Docker-based reproducibility
+- ✅ No hardcoded paths
+- ✅ Deterministic execution
+- ✅ Metrics written in success and error cases
+- ✅ Docker build and run cleanly
+- ✅ Structured logs
+- ✅ Structured metrics output
+- ✅ Clear documentation
