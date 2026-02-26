@@ -10,6 +10,22 @@ import numpy as np
 import yaml
 
 
+def write_error(output_path, version, message):
+    print("WRITING ERROR FILE")
+    error_output = {
+        "version": version,
+        "status": "error",
+        "error_message": message
+    }
+
+    with open(output_path, "w") as f:
+        json.dump(error_output, f, indent=4)
+
+    logging.error(message)
+    print(json.dumps(error_output))
+    sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Deterministic Rolling Signal Pipeline")
 
@@ -29,7 +45,9 @@ def main():
     logging.info("Job started")
     start_time = time.time()
 
-    # Load config
+    # ----------------------
+    # Load + Validate Config
+    # ----------------------
     try:
         with open(args.config, "r") as f:
             config = yaml.safe_load(f)
@@ -43,63 +61,47 @@ def main():
         logging.info(f"Config loaded successfully: seed={seed}, window={window}, version={version}")
 
     except Exception as e:
-        error_output = {
-            "version": "v1",
-            "status": "error",
-            "error_message": str(e)
-        }
-    # Validate input file
-    if not os.path.exists(args.input):
-        error_output = {
-            "version": version,
-            "status": "error",
-            "error_message": "Input file does not exist"
-        }
-        print(json.dumps(error_output))
-        sys.exit(1)
+        write_error(args.output, "v1", f"Config error: {str(e)}")
 
+    # ----------------------
+    # Validate Input File
+    # ----------------------
+    if not os.path.exists(args.input):
+        write_error(args.output, version, "Input file does not exist")
+
+    # ----------------------
+    # Load CSV
+    # ----------------------
     try:
         df = pd.read_csv(args.input)
         logging.info(f"CSV loaded successfully with {len(df)} rows")
 
     except Exception as e:
-        error_output = {
-            "version": version,
-            "status": "error",
-            "error_message": f"Failed to read CSV: {str(e)}"
-        }
-        print(json.dumps(error_output))
-        sys.exit(1)
+        write_error(args.output, version, f"Invalid CSV format: {str(e)}")
 
     if df.empty:
-        error_output = {
-            "version": version,
-            "status": "error",
-            "error_message": "Input CSV is empty"
-        }
-        print(json.dumps(error_output))
-        sys.exit(1)
+        write_error(args.output, version, "Input CSV is empty")
 
     if "close" not in df.columns:
-        error_output = {
-            "version": version,
-            "status": "error",
-            "error_message": "Missing 'close' column in CSV"
-        }
-        print(json.dumps(error_output))
-        sys.exit(1)
+        write_error(args.output, version, "Missing 'close' column in CSV")
 
-    # Compute rolling mean
+    # ----------------------
+    # Rolling Mean
+    # ----------------------
     df["rolling_mean"] = df["close"].rolling(window=window).mean()
     logging.info("Rolling mean calculated")
 
-    # Generate signal
+    # ----------------------
+    # Signal
+    # ----------------------
     df["signal"] = (df["close"] > df["rolling_mean"]).astype(int)
     logging.info("Signal column generated")
-    # Calculate metrics
+
+    # ----------------------
+    # Metrics
+    # ----------------------
     rows_processed = len(df)
     signal_rate = float(df["signal"].mean())
-
     latency_ms = int((time.time() - start_time) * 1000)
 
     output_data = {
@@ -112,14 +114,15 @@ def main():
         "status": "success"
     }
 
-    # Write output JSON file
+    # Write metrics file
     with open(args.output, "w") as f:
         json.dump(output_data, f, indent=4)
 
     logging.info(f"Metrics calculated: {output_data}")
     logging.info("Job completed successfully")
 
-    # Print JSON to stdout
     print(json.dumps(output_data))
+
+
 if __name__ == "__main__":
     main()
